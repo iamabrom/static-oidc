@@ -1,0 +1,19 @@
+services:
+  static-oidc:
+    build: .
+    image: static-oidc:latest
+    container_name: static-oidc
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ${FILES_PATH}:/srv/files
+    environment:
+      - TZ=${TZ}
+      - APP_URL=${APP_URL}
+      - APP_NAME=${APP_NAME:-static-oidc}
+      - OIDC_ISSUER_URL=${OIDC_ISSUER_URL}
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID}
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET}
+      - OIDC_GROUPS_CLAIM=${OIDC_GROUPS_CLAIM:-groups}
+      - OIDC_ADMIN_GROUP=${OIDC_ADMIN_GROUP}
