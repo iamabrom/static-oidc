@@ -159,7 +159,7 @@ Open `http://localhost:5173`. The Vite dev server proxies `/api/*` to Express on
 
 **What works:** directory listing, full auth flow, admin panel, upload, delete, rename, create folder.
 
-**What doesn't work:** direct file downloads and previews. Clicking a non-directory file redirects to `/files/…`, which is served by nginx — nginx isn't running in this mode. Use Option B to test file serving end-to-end.
+**What doesn't work:** direct file downloads and previews. Clicking a non-directory file redirects to its natural path (e.g. `/photo.jpg`), which nginx serves from the files volume — nginx isn't running in this mode. Use Option B to test file serving end-to-end.
 
 ---
 
@@ -219,6 +219,7 @@ In Dokploy (or any Docker host), use this `docker-compose.yml`:
 services:
   static-oidc:
     image: ghcr.io/iamabrom/static-oidc:latest
+    pull_policy: always
     container_name: static-oidc
     restart: unless-stopped
     ports:
@@ -235,6 +236,8 @@ services:
       - OIDC_GROUPS_CLAIM=${OIDC_GROUPS_CLAIM:-groups}
       - OIDC_ADMIN_GROUP=${OIDC_ADMIN_GROUP}
 ```
+
+`pull_policy: always` ensures Docker always pulls the latest image from GHCR on redeploy rather than using a locally cached copy.
 
 Set your environment variables in Dokploy's UI. Domain and SSL termination are handled by Dokploy's reverse proxy — no changes to the compose file are needed.
 
