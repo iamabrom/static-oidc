@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 export function NotFound({ path }: { path?: string }) {
   return (
