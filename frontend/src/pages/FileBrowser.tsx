@@ -3,6 +3,7 @@ import { useAuth } from '../auth/AuthProvider';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { FileList } from '../components/FileList';
 import { useFiles } from '../hooks/useFiles';
+import { NotFound } from './NotFound';
 
 export function FileBrowser() {
   const location = useLocation();
@@ -10,7 +11,9 @@ export function FileBrowser() {
   const { config } = useAuth();
 
   const currentPath = decodeURIComponent(location.pathname);
-  const { entries, loading, error } = useFiles(currentPath);
+  const { entries, loading, error, notFound } = useFiles(currentPath);
+
+  if (notFound) return <NotFound path={currentPath} />;
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
