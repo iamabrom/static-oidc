@@ -43,14 +43,11 @@ export function FileList({ entries, currentPath, baseRoute, isAdmin, onNavigate,
 
   const filePath = (name: string) => {
     const cleanPath = currentPath.replace(/^\//, '');
-    return `/files/${cleanPath ? `${cleanPath}/` : ''}${encodeURIComponent(name)}`;
+    return `/${cleanPath ? `${cleanPath}/` : ''}${encodeURIComponent(name)}`;
   };
 
   const publicUrl = (entry: FileEntry) => {
     const cleanPath = currentPath.replace(/^\//, '');
-    if (entry.type === 'file') {
-      return `${window.location.origin}/files/${cleanPath ? `${cleanPath}/` : ''}${encodeURIComponent(entry.name)}`;
-    }
     return `${window.location.origin}/${cleanPath ? `${cleanPath}/` : ''}${encodeURIComponent(entry.name)}`;
   };
 

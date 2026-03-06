@@ -10,8 +10,10 @@ const FILES_ROOT = process.env.FILES_PATH || '/srv/files';
 // All admin routes require a valid JWT with admin group membership
 router.use(verifyToken);
 
-function sanitizePath(requestedPath: string): string | null {
-  const decoded = decodeURIComponent(requestedPath || '');
+function sanitizePath(requestedPath: string | string[]): string | null {
+  // Express 5 wildcard params return string[] for multi-segment paths — join with /
+  const raw = Array.isArray(requestedPath) ? requestedPath.join('/') : (requestedPath || '');
+  const decoded = decodeURIComponent(raw);
   const resolved = path.resolve(FILES_ROOT, decoded.replace(/^\//, ''));
   if (!resolved.startsWith(FILES_ROOT)) return null;
   return resolved;
@@ -21,7 +23,7 @@ function sanitizePath(requestedPath: string): string | null {
 const upload = multer({
   storage: multer.diskStorage({
     destination: (req, _file, cb) => {
-      const dest = sanitizePath((req.params['path'] as string) || '');
+      const dest = sanitizePath(req.params['path'] || '');
       if (!dest) {
         cb(new Error('Invalid upload path'), '');
         return;
@@ -47,7 +49,7 @@ router.post('/upload{/*path}', upload.array('files'), (req: AuthenticatedRequest
 
 // DELETE /api/admin/delete/*path
 router.delete('/delete/*path', async (req: AuthenticatedRequest, res: Response) => {
-  const targetPath = sanitizePath(req.params['path'] as string);
+  const targetPath = sanitizePath(req.params['path']);
   if (!targetPath) {
     res.status(400).json({ error: 'Invalid path' });
     return;
@@ -74,7 +76,7 @@ router.delete('/delete/*path', async (req: AuthenticatedRequest, res: Response) 
 
 // POST /api/admin/mkdir/*path
 router.post('/mkdir/*path', async (req: AuthenticatedRequest, res: Response) => {
-  const targetPath = sanitizePath(req.params['path'] as string);
+  const targetPath = sanitizePath(req.params['path']);
   if (!targetPath) {
     res.status(400).json({ error: 'Invalid path' });
     return;

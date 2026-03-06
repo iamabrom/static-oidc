@@ -21,8 +21,8 @@ export function useFiles(path: string): UseFilesResult {
       .then(async res => {
         if (!res.ok) {
           if (res.status === 404) {
-            // Not a directory — let nginx serve the raw file directly
-            window.location.href = `/files${path}`;
+            // Not a directory — let nginx serve the raw file directly at its natural path
+            window.location.href = path;
             return;
           }
           throw new Error('Failed to load');

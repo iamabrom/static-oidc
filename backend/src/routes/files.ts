@@ -14,8 +14,10 @@ export interface FileEntry {
   mimeType: string | null;
 }
 
-function sanitizePath(requestedPath: string): string | null {
-  const decoded = decodeURIComponent(requestedPath);
+function sanitizePath(requestedPath: string | string[]): string | null {
+  // Express 5 wildcard params return string[] for multi-segment paths — join with /
+  const raw = Array.isArray(requestedPath) ? requestedPath.join('/') : (requestedPath || '');
+  const decoded = decodeURIComponent(raw);
   const resolved = path.resolve(FILES_ROOT, decoded.replace(/^\//, ''));
   // Prevent directory traversal
   if (!resolved.startsWith(FILES_ROOT)) return null;
@@ -24,8 +26,9 @@ function sanitizePath(requestedPath: string): string | null {
 
 // GET /api/files/*path
 router.get('{/*path}', async (req: Request, res: Response) => {
-  const requestedPath = (req.params['path'] as string) || '';
-  const absolutePath = sanitizePath(requestedPath);
+  const param = req.params['path'];
+  const pathStr = Array.isArray(param) ? param.join('/') : (param || '');
+  const absolutePath = sanitizePath(pathStr);
 
   if (!absolutePath) {
     res.status(400).json({ error: 'Invalid path' });
@@ -64,7 +67,7 @@ router.get('{/*path}', async (req: Request, res: Response) => {
       return a.name.localeCompare(b.name);
     });
 
-    res.json({ path: `/${requestedPath}`, entries: files });
+    res.json({ path: `/${pathStr}`, entries: files });
   } catch (err: unknown) {
     const error = err as NodeJS.ErrnoException;
     if (error.code === 'ENOENT') {
