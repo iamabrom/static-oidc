@@ -2,7 +2,7 @@
 
 A lightweight, self-hosted static file server with a built-in admin interface protected by OIDC authentication.
 
-Serve files and static websites publicly, manage them securely — works with any OIDC-compliant identity provider (AWS Cognito, Authentik, Authelia, Keycloak, and more).
+Serve files and static websites publicly, manage them securely — works with any OIDC-compliant identity provider (Amazon Cognito, Authentik, Authelia, Keycloak, and more).
 
 ---
 
@@ -22,7 +22,7 @@ Serve files and static websites publicly, manage them securely — works with an
 ### 1. Pull the image
 
 ```bash
-docker pull ghcr.io/OWNER/static-oidc:latest
+docker pull ghcr.io/iamabrom/static-oidc:latest
 ```
 
 ### 2. Create a `docker-compose.yml`
@@ -30,7 +30,7 @@ docker pull ghcr.io/OWNER/static-oidc:latest
 ```yaml
 services:
   static-oidc:
-    image: ghcr.io/OWNER/static-oidc:latest
+    image: ghcr.io/iamabrom/static-oidc:latest
     container_name: static-oidc
     restart: unless-stopped
     ports:
@@ -210,17 +210,15 @@ No build arguments are needed. The Docker image is fully portable — `APP_URL` 
 A pre-built image is published to GitHub Container Registry on every push to `main`:
 
 ```
-ghcr.io/OWNER/static-oidc:latest
+ghcr.io/iamabrom/static-oidc:latest
 ```
-
-Replace `OWNER` with the GitHub username or organization that hosts the repo.
 
 In Dokploy (or any Docker host), use this `docker-compose.yml`:
 
 ```yaml
 services:
   static-oidc:
-    image: ghcr.io/OWNER/static-oidc:latest
+    image: ghcr.io/iamabrom/static-oidc:latest
     container_name: static-oidc
     restart: unless-stopped
     ports:
