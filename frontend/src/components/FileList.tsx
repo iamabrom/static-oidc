@@ -69,9 +69,10 @@ export function FileList({ entries, currentPath, baseRoute, isAdmin, onNavigate,
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ borderBottom: '1px solid var(--border)' }}>
-            {['Name', 'Size', 'Modified', isAdmin ? 'Actions' : ''].filter(Boolean).map(h => (
+            {(['Name', 'Size', 'Modified'] as const).map(h => (
               <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: 'var(--text-secondary)', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
             ))}
+            <th style={{ padding: '8px 12px', color: 'var(--text-secondary)', fontWeight: 500, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{isAdmin ? 'Actions' : ''}</th>
           </tr>
         </thead>
         <tbody>
@@ -114,9 +115,9 @@ export function FileList({ entries, currentPath, baseRoute, isAdmin, onNavigate,
                 {formatDate(entry.modified)}
               </td>
 
-              {/* Admin actions */}
-              {isAdmin && (
-                <td style={{ padding: '10px 12px' }}>
+              {/* Actions */}
+              <td style={{ padding: '10px 12px' }}>
+                {isAdmin ? (
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <button
                       onClick={() => copyLink(entry)}
@@ -154,8 +155,14 @@ export function FileList({ entries, currentPath, baseRoute, isAdmin, onNavigate,
                       <Trash2 size={15} />
                     </button>
                   </div>
-                </td>
-              )}
+                ) : (
+                  entry.type === 'file' && (
+                    <a href={filePath(entry.name)} download title="Download" style={{ color: 'var(--text-secondary)', display: 'flex' }}>
+                      <Download size={15} />
+                    </a>
+                  )
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
